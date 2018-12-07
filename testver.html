@@ -1,0 +1,292 @@
+<?php
+
+$dsn = 'mysql:dbname=test_db;host=datenbank.com';
+$usuario = 'test';
+$pass = '13vs07';
+$sqlquery = 'SELECT ID, Name, Nachname, Adresse, Stadt, Telefonnummer FROM php_connection';
+
+// Conexión
+try{
+      $link = new PDO($dsn, $usuario, $pass);
+      $stmt = $link->query($sqlquery);
+
+       if($stmt === false){
+            die("Error executing the query: $sql_get_depts");
+        }
+}catch (PDOException $e){
+      echo 'Falló la conexión: ' . $e->getMessage();
+
+     }
+
+     // INSERCION DE NUEVOS REGISTROS
+     if (isset($_POST["submitDatabase"])){
+
+     try{
+
+         $link = new PDO($dsn, $usuario, $pass);
+         $link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+         $introDato = "INSERT INTO php_connection(Name, Nachname, Adresse, Stadt, Telefonnummer)
+               VALUES ('".$_POST["php_name"]."','".$_POST["php_nachname"]."',
+                 '".$_POST["php_adresse"]."','".$_POST["php_stadt"]."','".$_POST["php_telefon"]."')";
+         if ($link->query($introDato)) {
+
+             echo "EXITO";
+         }
+         else{
+             echo "FALLO";
+         }
+
+         //echo ' <script type="text/javascript">   location.reload();   </script>';
+         //$introDato = null;
+         $link = null;
+
+
+     }
+     catch(PDOException $e){
+       echo $e->getMessage();
+       }
+
+
+     }
+
+     elseif (isset($_POST["updateDatabase"])){
+
+     try{
+         $id = $_POST['php_id'];
+         $name = $_POST['php_name'];
+         $nachname = $_POST['php_nachname'];
+         $adresse = $_POST['php_adresse'];
+         $stadt = $_POST['php_stadt'];
+         $telefonnummer = $_POST['php_telefon'];
+         $link = new PDO($dsn, $usuario, $pass);
+         $link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+         $introDato = "UPDATE php_connection
+             SET Name='".$name."', Nachname='".$nachname."',
+              Adresse='".$adresse."', Stadt='".$stadt."',
+              Telefonnummer='".$telefonnummer."'
+              WHERE ID = '".$id."'";
+         /*"UPDATE php_connection
+             SET Name='".$_POST['php_name']."',
+             Nachname='".$_POST['php_nachname']."', Adresse='".$_POST['php_adresse']."',
+             Stadt='".$_POST['php_stadt']."', Telefonnummer='".$_POST['php_telefon']."'
+             WHERE ID = '".$id."'"; */
+         if ($link->query($introDato)) {
+             echo "EXITO";
+             $introDato = null;
+             $link = null;
+
+             header("Cache-Control: no-cache, must-revalidate");
+             header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+             header("Content-Type: application/xml; charset=utf-8");
+             //header("Location:enviado.php?mensaje=Exito");exit;
+         }
+         else{
+             echo "FALLO";
+         }
+         $introDato = null;
+         $link = null;
+
+         header("Cache-Control: no-cache, must-revalidate");
+         header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+         header("Content-Type: application/xml; charset=utf-8");
+         //header("location:enviado.php?mensaje=Exito");exit();
+     }
+     catch(PDOException $e){
+       echo $e->getMessage();
+       }
+     }
+     elseif (isset($_POST["deleteDatabase"])){
+
+      //if( isset( $_POST['php_id'] ) && is_numeric( $_POST['php_id'] ) && $_POST['php_id'] > 0 )
+       // {
+       try{
+
+             $id = $_POST['php_id'];
+             $link = new PDO($dsn, $usuario, $pass);
+             $link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+             $introDato = "DELETE FROM php_connection WHERE ID = '".$id."'";
+               if ($link->query($introDato)) {
+                   echo "EXITO";
+               }
+               else{
+                   echo "FALLO";
+               }
+         $introDato = null;
+         $link = null;
+       }
+     //}
+     catch(PDOException $e){
+       echo $e->getMessage();
+       }
+     }
+
+     elseif (isset($_POST["deleteDatabase"])){
+
+      //if( isset( $_POST['php_id'] ) && is_numeric( $_POST['php_id'] ) && $_POST['php_id'] > 0 )
+       // {
+       try{
+
+             $id = $_POST['php_id'];
+             $link = new PDO($dsn, $usuario, $pass);
+             $link->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+             $introDato = "DELETE FROM php_connection WHERE ID = '".$id."'";
+               if ($link->query($introDato)) {
+                   echo "EXITO";
+               }
+               else{
+                   echo "FALLO";
+               }
+         $introDato = null;
+         $link = null;
+       }
+     //}
+     catch(PDOException $e){
+       echo $e->getMessage();
+       }
+     }
+
+?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <title>Example</title>
+
+  <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <SCRIPT language="javascript">
+  // Funcion que permite seleccionar todos los elementos de una tabla
+  //let tableDatabase = document.getElementById('forecast-table');
+   function checkAll(ele) {
+      var checkboxes = document.getElementById("forecast_table").getElementsByTagName('input');
+      if (ele.checked) {
+          for (var i = 0; i < checkboxes.length; i++) {
+              if (checkboxes[i].type == 'checkbox') {
+                  checkboxes[i].checked = true;
+              }
+          }
+      } else {
+          for (var i = 0; i < checkboxes.length; i++) {
+              console.log(i)
+              if (checkboxes[i].type == 'checkbox') {
+                  checkboxes[i].checked = false;
+                  }
+              }
+          }
+      }
+
+  $(document).ready(function() {
+          var table = $('#forecast_table').DataTable();
+
+          $('#forecast_table tbody').on( 'click', 'tr', function () {
+          if ( $(this).hasClass('selected') )
+              $(this).removeClass('selected');
+          }
+          else {
+              table.$('tr.selected').removeClass('selected');
+              $(this).addClass('selected');
+          }
+  } );
+/*
+  $('#button').click( function () {
+              table.row('.selected').remove().draw( false );
+              } );
+  } );
+*/
+
+//funcion que resetea el formulario
+function resetear(){
+		document.forms['form-horizontal'].reset();
+  }
+
+
+
+
+  </SCRIPT>
+
+
+</head>
+<body>
+
+<div class="container">
+    <section>
+        <hr> <h1>Abteilung</h1><hr><hr>
+
+        <section>
+
+            <h5> Geben Sie die Daten der neuen Registrierung ein, bitte: </h5><hr><hr>
+            <form class="form-horizontal" action="" method="post">
+                <input type="hidden" name="php_id" id="php_id"><br>
+                Name: <input type="text" name="php_name" id="php_name"><br>
+                Nachname: <input type="text" name="php_nachname" id="php_nachname"><br>
+                Adresse: <input type="text" name="php_adresse" id="php_adresse"><br>
+                Stadt: <input type="text" name="php_stadt" id="php_stadt"><br>
+                Telefonnummer: <input type="text" name="php_telefon" id="php_telefon"><br>
+                  <br><br>
+                <input type="submit" onclick="resetear" name="submitDatabase" on>
+                <input type="submit" onclick="resetear" value="Aendern" name="updateDatabase"/>
+                <input type="submit" onclick="resetear" value="Loeschen" name="deleteDatabase"/>
+
+            </form>
+
+        </section>
+        <hr><hr>
+        <section>
+
+            <table border=2 id="forecast_table" class="table table-striped table-bordered" style="width:800px;" >
+
+        <thead>
+        <tr>
+                <!-- <th>Select<input type="checkbox" onchange="checkAll(this)" name="chk[]"/></th> -->
+                <th>ID</th>
+                <th>Name</th>
+                <th>Nachname</th>
+                <th>Adresse</th>
+                <th>Stadt</th>
+                <th>Telefonnummer</th>
+            </tr>
+            </thead>
+
+             <tbody>
+             <?php while($row = $stmt->fetch(PDO::FETCH_ASSOC)) : ?>
+      <tr onclick="HighLightTR(this, #c9cc99','cc3333');">
+           <!-- <td><input type="checkbox" id="checkDatabase"/> </td> -->
+           <td><?php echo htmlspecialchars($row['ID']); ?></td>
+           <td><?php echo htmlspecialchars($row['Name']); ?></td>
+           <td><?php echo htmlspecialchars($row['Nachname']); ?></td>
+           <td><?php echo htmlspecialchars($row['Adresse']); ?></td>
+           <td><?php echo htmlspecialchars($row['Stadt']); ?></td>
+           <td><?php echo htmlspecialchars($row['Telefonnummer']); ?></td>
+
+        </tr>
+
+            <?php endwhile; ?>
+ </tbody>
+</table>
+
+</section>
+
+<script>
+var table = document.getElementById('forecast_table');
+
+    for(var i = 1; i < table.rows.length; i++)
+    {
+      table.rows[i].onclick = function()
+                    {
+     //rIndex = this.rowIndex;
+     document.getElementById("php_id").value = this.cells[0].innerHTML;
+     document.getElementById("php_name").value = this.cells[1].innerHTML;
+     document.getElementById("php_nachname").value = this.cells[2].innerHTML;
+     document.getElementById("php_adresse").value = this.cells[3].innerHTML;
+     document.getElementById("php_stadt").value = this.cells[4].innerHTML;
+     document.getElementById("php_telefon").value = this.cells[5].innerHTML;
+
+      };
+    }
+
+
+</script>
+</div>
+<pre>
+<?php var_dump($_POST); ?>
+</pre>
+</body>
+</html>
